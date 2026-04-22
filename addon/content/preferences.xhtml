@@ -8,41 +8,123 @@
 <groupbox
   onload="Zotero.__addonInstance__.hooks.onPrefsEvent('load', { window })"
 >
-  <label>
-    <html:h2 data-l10n-id="pref-title"></html:h2>
-  </label>
-  <description
-    class="random-read-pref-description"
-    data-l10n-id="pref-whitelist-description"
-  ></description>
-  <hbox class="random-read-pref-toolbar">
-    <html:button
-      id="zotero-prefpane-__addonRef__-add-collection"
-      class="random-read-pref-action"
-      type="button"
-      data-l10n-id="pref-add-collection"
-    ></html:button>
-    <html:button
-      id="zotero-prefpane-__addonRef__-refresh-collections"
-      class="random-read-pref-action"
-      type="button"
-      data-l10n-id="pref-refresh-collections"
-    ></html:button>
-    <html:button
-      id="zotero-prefpane-__addonRef__-clear-history"
-      class="random-read-pref-action random-read-pref-action-secondary"
-      type="button"
-      data-l10n-id="pref-clear-history"
-    ></html:button>
-  </hbox>
-  <description
-    class="random-read-pref-note"
-    data-l10n-id="pref-clear-history-help"
-  ></description>
-  <html:div
-    id="zotero-prefpane-__addonRef__-collections-list"
-    class="random-read-collections-list"
-  ></html:div>
+  <html:div class="random-read-pref-cards">
+    <html:section
+      id="zotero-prefpane-__addonRef__-reading-card"
+      class="random-read-pref-card"
+    >
+      <html:div class="random-read-pref-card-header">
+        <html:div
+          class="random-read-pref-card-title"
+          data-l10n-id="pref-reading-card-title"
+        ></html:div>
+        <description
+          class="random-read-pref-card-description"
+          data-l10n-id="pref-whitelist-description"
+        ></description>
+      </html:div>
+      <html:div class="random-read-pref-card-divider"></html:div>
+      <hbox class="random-read-pref-toolbar">
+        <html:button
+          id="zotero-prefpane-__addonRef__-add-collection"
+          class="random-read-pref-action"
+          type="button"
+          data-l10n-id="pref-add-collection"
+        ></html:button>
+        <html:button
+          id="zotero-prefpane-__addonRef__-refresh-collections"
+          class="random-read-pref-action"
+          type="button"
+          data-l10n-id="pref-refresh-collections"
+        ></html:button>
+        <html:button
+          id="zotero-prefpane-__addonRef__-clear-history"
+          class="random-read-pref-action random-read-pref-action-secondary"
+          type="button"
+          data-l10n-id="pref-clear-history"
+        ></html:button>
+      </hbox>
+      <html:div
+        id="zotero-prefpane-__addonRef__-collections-list"
+        class="random-read-collections-list"
+      ></html:div>
+    </html:section>
+
+    <html:section
+      id="zotero-prefpane-__addonRef__-pdf-zoom-card"
+      class="random-read-pref-card"
+    >
+      <html:div class="random-read-pref-card-header">
+        <html:div
+          class="random-read-pref-card-title"
+          data-l10n-id="pref-default-pdf-zoom-title"
+        ></html:div>
+        <description
+          class="random-read-pref-card-description"
+          data-l10n-id="pref-default-pdf-zoom-help"
+        ></description>
+      </html:div>
+      <html:div class="random-read-pref-card-divider"></html:div>
+      <html:div class="random-read-pref-zoom-options">
+        <html:label class="random-read-pref-zoom-option">
+          <html:input
+            id="zotero-prefpane-__addonRef__-default-pdf-zoom-mode-actual-size"
+            name="zotero-prefpane-__addonRef__-default-pdf-zoom-mode"
+            type="radio"
+            value="actual-size"
+          />
+          <html:span
+            data-l10n-id="pref-default-pdf-zoom-actual-size"
+          ></html:span>
+        </html:label>
+        <html:label class="random-read-pref-zoom-option">
+          <html:input
+            id="zotero-prefpane-__addonRef__-default-pdf-zoom-mode-page-fit"
+            name="zotero-prefpane-__addonRef__-default-pdf-zoom-mode"
+            type="radio"
+            value="page-fit"
+          />
+          <html:span data-l10n-id="pref-default-pdf-zoom-page-fit"></html:span>
+        </html:label>
+        <html:label class="random-read-pref-zoom-option">
+          <html:input
+            id="zotero-prefpane-__addonRef__-default-pdf-zoom-mode-page-width"
+            name="zotero-prefpane-__addonRef__-default-pdf-zoom-mode"
+            type="radio"
+            value="page-width"
+          />
+          <html:span
+            data-l10n-id="pref-default-pdf-zoom-page-width"
+          ></html:span>
+        </html:label>
+        <html:label
+          class="random-read-pref-zoom-option random-read-pref-zoom-option-custom"
+        >
+          <html:input
+            id="zotero-prefpane-__addonRef__-default-pdf-zoom-mode-custom"
+            name="zotero-prefpane-__addonRef__-default-pdf-zoom-mode"
+            type="radio"
+            value="custom"
+          />
+          <html:span data-l10n-id="pref-default-pdf-zoom-custom"></html:span>
+          <html:input
+            id="zotero-prefpane-__addonRef__-default-pdf-zoom-percent"
+            class="random-read-pref-percent-input"
+            inputmode="numeric"
+            min="10"
+            max="1000"
+            step="1"
+            type="number"
+          />
+          <html:span
+            id="zotero-prefpane-__addonRef__-default-pdf-zoom-percent-suffix"
+            class="random-read-pref-percent-suffix"
+            >%</html:span
+          >
+        </html:label>
+      </html:div>
+    </html:section>
+  </html:div>
 </groupbox>
 <vbox>
   <html:label

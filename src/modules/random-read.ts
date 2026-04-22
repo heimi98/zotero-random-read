@@ -1,6 +1,14 @@
 import type { AllowedCollection } from "./allowed-collections";
 import { getHistoryEntry, recordSuccessfulOpen } from "./history-store";
-import { buildHistoryKey, computeCandidateWeight, pickWeighted } from "./random-selection";
+import {
+  buildHistoryKey,
+  computeCandidateWeight,
+  pickWeighted,
+} from "./random-selection";
+import {
+  normalizeDefaultPdfZoomPercent,
+  type DefaultPdfZoomMode,
+} from "./preferences-data";
 import { getAllowedCollections } from "../utils/prefs";
 
 export type RandomReadFailureReason =
@@ -20,7 +28,46 @@ export class RandomReadError extends Error {
 
 interface CandidateItem {
   item: Zotero.Item;
+  attachment: Zotero.Item;
   historyKey: string;
+}
+
+type DefaultPdfZoomValue = number | "page-fit" | "page-width";
+
+export function shouldApplyDefaultPdfZoom({
+  attachmentReaderType,
+  hasExistingReaderState,
+  isReaderAlreadyOpen,
+}: {
+  attachmentReaderType?: string | null;
+  hasExistingReaderState: boolean;
+  isReaderAlreadyOpen: boolean;
+}) {
+  return (
+    attachmentReaderType === "pdf" &&
+    !hasExistingReaderState &&
+    !isReaderAlreadyOpen
+  );
+}
+
+export function resolveDefaultPdfZoomValue({
+  mode,
+  customPercent,
+}: {
+  mode: DefaultPdfZoomMode;
+  customPercent: number;
+}): DefaultPdfZoomValue {
+  switch (mode) {
+    case "actual-size":
+      return 1;
+    case "page-fit":
+      return "page-fit";
+    case "custom":
+      return normalizeDefaultPdfZoomPercent(customPercent) / 100;
+    case "page-width":
+    default:
+      return "page-width";
+  }
 }
 
 export async function openRandomReadableItem(win: _ZoteroTypes.MainWindow) {
@@ -39,12 +86,16 @@ export async function openRandomReadableItem(win: _ZoteroTypes.MainWindow) {
     const chosen = chooseCandidate(remaining);
     try {
       const openEvent = new win.MouseEvent("dblclick", { button: 0 });
-      await win.ZoteroPane.viewItems([chosen.item], openEvent);
+      await openCandidateAttachment(win, chosen, openEvent);
       recordSuccessfulOpen(chosen.item.libraryID, chosen.item.key);
       return;
     } catch (error) {
-      Zotero.logError(error instanceof Error ? error : new Error(String(error)));
-      const index = remaining.findIndex((candidate) => candidate.historyKey === chosen.historyKey);
+      Zotero.logError(
+        error instanceof Error ? error : new Error(String(error)),
+      );
+      const index = remaining.findIndex(
+        (candidate) => candidate.historyKey === chosen.historyKey,
+      );
       if (index >= 0) {
         remaining.splice(index, 1);
       }
@@ -77,10 +128,13 @@ async function collectCandidateItems(allowedCollections: AllowedCollection[]) {
 
         candidates.set(item.id, {
           item,
+          attachment: bestAttachment,
           historyKey: buildHistoryKey(item.libraryID, item.key),
         });
       } catch (error) {
-        Zotero.logError(error instanceof Error ? error : new Error(String(error)));
+        Zotero.logError(
+          error instanceof Error ? error : new Error(String(error)),
+        );
       }
     }
   }
@@ -101,7 +155,11 @@ function resolveCollectionIDs(allowedCollections: AllowedCollection[]) {
     }
 
     collectionIDs.add(collection.id);
-    for (const descendent of collection.getDescendents(false, "collection", false)) {
+    for (const descendent of collection.getDescendents(
+      false,
+      "collection",
+      false,
+    )) {
       collectionIDs.add(descendent.id);
     }
   }
@@ -113,7 +171,10 @@ function chooseCandidate(candidates: CandidateItem[]) {
   const nowISO = new Date().toISOString();
   return pickWeighted(
     candidates.map((candidate) => {
-      const history = getHistoryEntry(candidate.item.libraryID, candidate.item.key);
+      const history = getHistoryEntry(
+        candidate.item.libraryID,
+        candidate.item.key,
+      );
       return {
         value: candidate,
         weight: computeCandidateWeight({
@@ -124,4 +185,12 @@ function chooseCandidate(candidates: CandidateItem[]) {
       };
     }),
   );
+}
+
+async function openCandidateAttachment(
+  win: _ZoteroTypes.MainWindow,
+  candidate: CandidateItem,
+  openEvent: MouseEvent,
+) {
+  await win.ZoteroPane.viewAttachment(candidate.attachment.id, openEvent);
 }

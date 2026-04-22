@@ -4,6 +4,10 @@ import {
   refreshAllMainWindowButtons,
   uninstallMainWindowUI,
 } from "./modules/main-window";
+import {
+  installPdfDefaultZoomBehavior,
+  uninstallPdfDefaultZoomBehavior,
+} from "./modules/pdf-default-zoom";
 import { registerPreferencePane } from "./modules/preferences";
 import { registerPrefsScripts } from "./modules/preferenceScript";
 import { initLocale } from "./utils/locale";
@@ -17,6 +21,7 @@ async function onStartup() {
 
   initLocale();
   registerPreferencePane();
+  installPdfDefaultZoomBehavior();
   await loadHistoryStore();
 
   await Promise.all(
@@ -39,6 +44,7 @@ async function onShutdown(): Promise<void> {
   await Promise.all(
     Zotero.getMainWindows().map((win) => uninstallMainWindowUI(win)),
   );
+  uninstallPdfDefaultZoomBehavior();
   await shutdownHistoryStore();
   addon.data.alive = false;
   // @ts-expect-error - Plugin instance is not typed

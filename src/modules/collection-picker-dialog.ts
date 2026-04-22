@@ -197,15 +197,34 @@ function ensureDialogStyles(doc: Document) {
   style.id = "random-read-picker-style";
   style.textContent = `
     #random-read-picker-root {
+      --rr-warm-bg: #fff5eb;
+      --rr-warm-card: #fffaf4;
+      --rr-warm-card-strong: #fff1e2;
+      --rr-warm-surface: #fffdf9;
+      --rr-warm-border: #ebd5bc;
+      --rr-warm-border-soft: rgba(235, 213, 188, 0.65);
+      --rr-warm-accent: #d88a3d;
+      --rr-warm-accent-strong: #b9692b;
+      --rr-warm-accent-soft: #f6dfc4;
+      --rr-warm-text: #5a3820;
+      --rr-warm-muted: #8b684a;
+      --rr-warm-shadow: rgba(133, 84, 37, 0.12);
       display: flex;
       flex-direction: column;
       gap: 14px;
-      color: #2f261e;
+      padding: 8px;
+      color: var(--rr-warm-text);
+      background: linear-gradient(
+        180deg,
+        var(--rr-warm-bg) 0%,
+        var(--rr-warm-card) 100%
+      );
     }
     .rr-picker-intro {
       margin: 0;
       font-size: 15px;
       line-height: 1.45;
+      color: var(--rr-warm-muted);
     }
     .rr-picker-actions {
       display: flex;
@@ -215,36 +234,46 @@ function ensureDialogStyles(doc: Document) {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      border: 1px solid #e2d2c4;
+      border: 1px solid rgba(185, 105, 43, 0.2);
       border-radius: 999px;
-      background: linear-gradient(180deg, #fffdf9 0%, #f7efe8 100%);
+      background: linear-gradient(
+        180deg,
+        var(--rr-warm-accent) 0%,
+        var(--rr-warm-accent-strong) 100%
+      );
       min-height: 38px;
       padding: 0 16px;
       font-size: 13px;
       font-weight: 600;
       line-height: 1;
       cursor: pointer;
-      color: #5f4635;
+      color: #fffaf4;
+      box-shadow: 0 8px 18px var(--rr-warm-shadow);
     }
     .rr-picker-tree {
       max-height: 430px;
       overflow: auto;
-      border: 1px solid #eadccf;
-      border-radius: 14px;
-      background: #fffaf5;
-      padding: 12px;
+      border: 1px solid var(--rr-warm-border-soft);
+      border-radius: 18px;
+      background: linear-gradient(
+        180deg,
+        var(--rr-warm-surface) 0%,
+        rgba(255, 243, 229, 0.9) 100%
+      );
+      padding: 14px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
     }
     .rr-picker-library + .rr-picker-library {
       margin-top: 14px;
       padding-top: 14px;
-      border-top: 1px solid #efe2d6;
+      border-top: 1px solid var(--rr-warm-border-soft);
     }
     .rr-picker-library-title {
       margin: 0 0 8px;
       font-size: 13px;
       font-weight: 700;
       letter-spacing: 0.04em;
-      color: #8b6a54;
+      color: var(--rr-warm-muted);
       text-transform: uppercase;
     }
     .rr-picker-row {
@@ -253,17 +282,18 @@ function ensureDialogStyles(doc: Document) {
       gap: 10px;
       padding: 8px 10px;
       padding-left: calc(10px + var(--rr-picker-depth) * 18px);
-      border-radius: 10px;
+      border-radius: 12px;
       cursor: pointer;
       user-select: none;
+      color: var(--rr-warm-text);
     }
     .rr-picker-row:hover {
-      background: #f6eee7;
+      background: var(--rr-warm-accent-soft);
     }
     .rr-picker-checkbox {
       width: 16px;
       height: 16px;
-      accent-color: #e98731;
+      accent-color: var(--rr-warm-accent);
       flex: 0 0 auto;
     }
     .rr-picker-label {
@@ -272,7 +302,7 @@ function ensureDialogStyles(doc: Document) {
     }
     .rr-picker-children {
       margin-left: 14px;
-      border-left: 1px solid #eadccf;
+      border-left: 1px solid var(--rr-warm-border-soft);
     }
   `;
 

@@ -1,7 +1,12 @@
-pref-title = Random Read
+pref-reading-card-title = Random Read
 pref-whitelist-description = Only items inside the selected Zotero folders are eligible. Parent folders automatically include all child folders.
 pref-add-collection = Add folder
 pref-refresh-collections = Refresh
 pref-clear-history = Clear reading data
-pref-clear-history-help = Remove all locally recorded open counts and last-opened timestamps so every document behaves like a fresh random candidate again.
+pref-default-pdf-zoom-title = Default PDF page size
+pref-default-pdf-zoom-help = Only applies the first time a PDF is opened in Zotero's built-in reader. After that, Zotero keeps restoring your own zoom choice as usual.
+pref-default-pdf-zoom-actual-size = Actual Size
+pref-default-pdf-zoom-page-fit = Fit to Page
+pref-default-pdf-zoom-page-width = Fit to Width
+pref-default-pdf-zoom-custom = Custom percentage
 pref-help = { $name } Build { $version } { $time }

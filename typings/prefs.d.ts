@@ -8,6 +8,8 @@ declare namespace _ZoteroTypes {
   interface Prefs {
     PluginPrefsMap: {
       "allowedCollections": string;
+      "defaultPdfZoomMode": string;
+      "defaultPdfZoomPercent": number;
     };
   }
 }

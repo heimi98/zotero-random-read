@@ -19,7 +19,7 @@ npm run build
 
 Before publishing:
 
-1. Confirm `package.json` version is `0.1.0`
+1. Confirm `package.json` version is `0.2.0`
 2. Run `npm run build`
 3. Check `.scaffold/build/zotero-random-read.xpi` exists
 4. Inspect the packaged manifest:
@@ -32,4 +32,4 @@ unzip -p .scaffold/build/zotero-random-read.xpi manifest.json
 
 - Repository: `https://github.com/heimi98/zotero-random-read`
 - The scaffold release URLs are configured for GitHub Releases
-- The built `.xpi` can be attached to a `v0.1.0` release later
+- The built `.xpi` can be attached to a `v0.2.0` release later

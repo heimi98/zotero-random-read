@@ -7,8 +7,19 @@ import { openCollectionPickerDialog } from "./collection-picker-dialog";
 import { clearHistoryStore } from "./history-store";
 import { getString } from "../utils/locale";
 import { attachButtonClickListener } from "./preference-events";
+import {
+  normalizeDefaultPdfZoomMode,
+  normalizeDefaultPdfZoomPercent,
+} from "./preferences-data";
 import { filterMissingAllowedCollections } from "./selectable-collections";
-import { getAllowedCollections, setAllowedCollections } from "../utils/prefs";
+import {
+  getAllowedCollections,
+  getDefaultPdfZoomMode,
+  getDefaultPdfZoomPercent,
+  setAllowedCollections,
+  setDefaultPdfZoomMode,
+  setDefaultPdfZoomPercent,
+} from "../utils/prefs";
 
 export async function registerPrefsScripts(window: Window) {
   addon.data.prefs = {
@@ -24,14 +35,15 @@ export function formatSelectedCollectionLabel(collection: AllowedCollection) {
 
 async function renderPrefsUI(window: Window) {
   const doc = window.document;
+  syncDefaultPdfZoomControls(doc);
+
   const list = getCollectionsList(doc);
   if (!list) {
     return;
   }
 
-  const { validCollections, missingCollections } = filterMissingAllowedCollections(
-    getAllowedCollections(),
-  );
+  const { validCollections, missingCollections } =
+    filterMissingAllowedCollections(getAllowedCollections());
 
   list.replaceChildren();
   const rows = [
@@ -48,7 +60,9 @@ async function renderPrefsUI(window: Window) {
   ];
 
   for (const row of rows) {
-    list.appendChild(createCollectionRow(doc, row.collection, row.status, row.missing));
+    list.appendChild(
+      createCollectionRow(doc, row.collection, row.status, row.missing),
+    );
   }
 }
 
@@ -59,7 +73,10 @@ function bindPrefEvents(window: Window) {
     `#zotero-prefpane-${config.addonRef}-add-collection`,
   ) as HTMLButtonElement | null;
   if (addButton) {
-    attachButtonClickListener(addButton, () => void handleAddCollection(window));
+    attachButtonClickListener(
+      addButton,
+      () => void handleAddCollection(window),
+    );
   }
 
   const refreshButton = doc.querySelector(
@@ -73,7 +90,47 @@ function bindPrefEvents(window: Window) {
     `#zotero-prefpane-${config.addonRef}-clear-history`,
   ) as HTMLButtonElement | null;
   if (clearHistoryButton) {
-    attachButtonClickListener(clearHistoryButton, () => void handleClearHistory(window));
+    attachButtonClickListener(
+      clearHistoryButton,
+      () => void handleClearHistory(window),
+    );
+  }
+
+  for (const radio of getDefaultPdfZoomModeInputs(doc)) {
+    radio.addEventListener("change", () => {
+      if (!radio.checked) {
+        return;
+      }
+      setDefaultPdfZoomMode(normalizeDefaultPdfZoomMode(radio.value));
+      syncDefaultPdfZoomControls(doc);
+    });
+  }
+
+  const percentInput = getDefaultPdfZoomPercentInput(doc);
+  if (percentInput) {
+    const commitPercent = (raw: string, fallbackToStored: boolean) => {
+      const trimmed = raw.trim();
+      if (!trimmed) {
+        if (fallbackToStored) {
+          syncDefaultPdfZoomControls(doc);
+        }
+        return;
+      }
+
+      const percent = normalizeDefaultPdfZoomPercent(trimmed);
+      setDefaultPdfZoomPercent(percent);
+      percentInput.value = String(percent);
+    };
+
+    percentInput.addEventListener("input", () => {
+      commitPercent(percentInput.value, false);
+    });
+    percentInput.addEventListener("change", () => {
+      commitPercent(percentInput.value, true);
+    });
+    percentInput.addEventListener("blur", () => {
+      commitPercent(percentInput.value, true);
+    });
   }
 }
 
@@ -89,7 +146,10 @@ async function handleAddCollection(window: Window) {
     return;
   }
 
-  const selectedCollections = await openCollectionPickerDialog(sections, current);
+  const selectedCollections = await openCollectionPickerDialog(
+    sections,
+    current,
+  );
   if (!selectedCollections) {
     return;
   }
@@ -145,7 +205,10 @@ function createCollectionRow(
   removeButton.textContent = getString("prefs-remove-button");
   removeButton.addEventListener("click", () => {
     const remaining = getAllowedCollections().filter((current) => {
-      return createCollectionReferenceKey(current) !== createCollectionReferenceKey(collection);
+      return (
+        createCollectionReferenceKey(current) !==
+        createCollectionReferenceKey(collection)
+      );
     });
     setAllowedCollections(remaining);
     if (doc.defaultView) {
@@ -161,4 +224,31 @@ function getCollectionsList(doc: Document) {
   return doc.querySelector(
     `#zotero-prefpane-${config.addonRef}-collections-list`,
   ) as HTMLDivElement | null;
+}
+
+function syncDefaultPdfZoomControls(doc: Document) {
+  const mode = getDefaultPdfZoomMode();
+  const percent = getDefaultPdfZoomPercent();
+
+  for (const radio of getDefaultPdfZoomModeInputs(doc)) {
+    radio.checked = radio.value === mode;
+  }
+
+  const percentInput = getDefaultPdfZoomPercentInput(doc);
+  if (percentInput) {
+    percentInput.value = String(percent);
+    percentInput.disabled = mode !== "custom";
+  }
+}
+
+function getDefaultPdfZoomModeInputs(doc: Document) {
+  return doc.querySelectorAll(
+    `input[name="zotero-prefpane-${config.addonRef}-default-pdf-zoom-mode"]`,
+  ) as NodeListOf<HTMLInputElement>;
+}
+
+function getDefaultPdfZoomPercentInput(doc: Document) {
+  return doc.querySelector(
+    `#zotero-prefpane-${config.addonRef}-default-pdf-zoom-percent`,
+  ) as HTMLInputElement | null;
 }

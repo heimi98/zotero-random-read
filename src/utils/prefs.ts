@@ -1,8 +1,11 @@
 import { config } from "../../package.json";
 import type { AllowedCollection } from "../modules/allowed-collections";
 import {
+  normalizeDefaultPdfZoomMode,
+  normalizeDefaultPdfZoomPercent,
   parseAllowedCollectionsPreference,
   serializeAllowedCollectionsPreference,
+  type DefaultPdfZoomMode,
 } from "../modules/preferences-data";
 
 type PluginPrefsMap = _ZoteroTypes.Prefs["PluginPrefsMap"];
@@ -48,5 +51,24 @@ export function setAllowedCollections(collections: AllowedCollection[]) {
   return setPref(
     "allowedCollections",
     serializeAllowedCollectionsPreference(collections),
+  );
+}
+
+export function getDefaultPdfZoomMode(): DefaultPdfZoomMode {
+  return normalizeDefaultPdfZoomMode(getPref("defaultPdfZoomMode"));
+}
+
+export function setDefaultPdfZoomMode(mode: DefaultPdfZoomMode) {
+  return setPref("defaultPdfZoomMode", normalizeDefaultPdfZoomMode(mode));
+}
+
+export function getDefaultPdfZoomPercent() {
+  return normalizeDefaultPdfZoomPercent(getPref("defaultPdfZoomPercent"));
+}
+
+export function setDefaultPdfZoomPercent(percent: number) {
+  return setPref(
+    "defaultPdfZoomPercent",
+    normalizeDefaultPdfZoomPercent(percent),
   );
 }
