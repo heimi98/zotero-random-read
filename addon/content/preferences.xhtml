@@ -1,0 +1,52 @@
+<linkset>
+  <html:link rel="localization" href="__addonRef__-preferences.ftl" />
+  <html:link
+    rel="stylesheet"
+    href="chrome://__addonRef__/content/preferences.css"
+  />
+</linkset>
+<groupbox
+  onload="Zotero.__addonInstance__.hooks.onPrefsEvent('load', { window })"
+>
+  <label>
+    <html:h2 data-l10n-id="pref-title"></html:h2>
+  </label>
+  <description
+    class="random-read-pref-description"
+    data-l10n-id="pref-whitelist-description"
+  ></description>
+  <hbox class="random-read-pref-toolbar">
+    <html:button
+      id="zotero-prefpane-__addonRef__-add-collection"
+      class="random-read-pref-action"
+      type="button"
+      data-l10n-id="pref-add-collection"
+    ></html:button>
+    <html:button
+      id="zotero-prefpane-__addonRef__-refresh-collections"
+      class="random-read-pref-action"
+      type="button"
+      data-l10n-id="pref-refresh-collections"
+    ></html:button>
+    <html:button
+      id="zotero-prefpane-__addonRef__-clear-history"
+      class="random-read-pref-action random-read-pref-action-secondary"
+      type="button"
+      data-l10n-id="pref-clear-history"
+    ></html:button>
+  </hbox>
+  <description
+    class="random-read-pref-note"
+    data-l10n-id="pref-clear-history-help"
+  ></description>
+  <html:div
+    id="zotero-prefpane-__addonRef__-collections-list"
+    class="random-read-collections-list"
+  ></html:div>
+</groupbox>
+<vbox>
+  <html:label
+    data-l10n-id="pref-help"
+    data-l10n-args='{"time": "__buildTime__","name": "__addonName__","version":"__buildVersion__"}'
+  ></html:label>
+</vbox>

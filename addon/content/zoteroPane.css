@@ -1,0 +1,7 @@
+#zotero-random-read-toolbar-button {
+  list-style-image: url("chrome://zotero-random-read/content/icons/dice.svg");
+}
+
+#zotero-random-read-toolbar-button[disabled="true"] {
+  opacity: 0.55;
+}
