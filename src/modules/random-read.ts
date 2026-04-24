@@ -36,18 +36,10 @@ type DefaultPdfZoomValue = number | "page-fit" | "page-width";
 
 export function shouldApplyDefaultPdfZoom({
   attachmentReaderType,
-  hasExistingReaderState,
-  isReaderAlreadyOpen,
 }: {
   attachmentReaderType?: string | null;
-  hasExistingReaderState: boolean;
-  isReaderAlreadyOpen: boolean;
 }) {
-  return (
-    attachmentReaderType === "pdf" &&
-    !hasExistingReaderState &&
-    !isReaderAlreadyOpen
-  );
+  return attachmentReaderType === "pdf";
 }
 
 export function resolveDefaultPdfZoomValue({

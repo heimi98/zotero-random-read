@@ -21,17 +21,12 @@ export function installPdfDefaultZoomBehavior() {
   }
 
   originalReaderOpen = Zotero.Reader.open.bind(Zotero.Reader) as ReaderOpen;
-  Zotero.Reader.open = (async function wrappedReaderOpen(
+  Zotero.Reader.open = async function wrappedReaderOpen(
     itemID,
     location,
     options,
   ) {
     const item = await Zotero.Items.getAsync(itemID);
-    const isReaderAlreadyOpen = isPdfReaderAlreadyOpen(itemID);
-    const hasExistingReaderState = item
-      ? await hasExistingPdfReaderState(item)
-      : false;
-
     const reader = await originalReaderOpen!(itemID, location, options);
 
     if (
@@ -39,8 +34,6 @@ export function installPdfDefaultZoomBehavior() {
       !reader ||
       !shouldApplyDefaultPdfZoom({
         attachmentReaderType: item.attachmentReaderType,
-        hasExistingReaderState,
-        isReaderAlreadyOpen,
       })
     ) {
       return reader;
@@ -60,7 +53,7 @@ export function installPdfDefaultZoomBehavior() {
     ]);
     pdfViewer.currentScaleValue = zoomValue;
     return reader;
-  }) as ReaderOpen;
+  } as ReaderOpen;
 }
 
 export function uninstallPdfDefaultZoomBehavior() {
@@ -70,35 +63,6 @@ export function uninstallPdfDefaultZoomBehavior() {
 
   Zotero.Reader.open = originalReaderOpen;
   originalReaderOpen = undefined;
-}
-
-function isPdfReaderAlreadyOpen(itemID: number) {
-  return Boolean(
-    (Zotero.Reader as any)._readers?.some((reader: any) => reader.itemID === itemID),
-  );
-}
-
-async function hasExistingPdfReaderState(attachment: Zotero.Item) {
-  if (attachment.attachmentReaderType !== "pdf") {
-    return false;
-  }
-
-  try {
-    const directory = Zotero.Attachments.getStorageDirectory(attachment);
-    const fileNames = [".zotero-reader-state", ".zotero-pdf-state"];
-
-    for (const fileName of fileNames) {
-      const file = directory.clone();
-      file.append(fileName);
-      if (await IOUtils.exists(file.path)) {
-        return true;
-      }
-    }
-  } catch (error) {
-    Zotero.logError(error instanceof Error ? error : new Error(String(error)));
-  }
-
-  return false;
 }
 
 async function waitForInitializedPdfViewer(reader: any) {

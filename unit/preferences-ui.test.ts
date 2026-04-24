@@ -29,7 +29,7 @@ test("preferences pane does not render a manual enable checkbox", () => {
   assert.ok(!content.includes("-enable"));
   assert.ok(!content.includes("-collections-empty"));
   assert.ok(!content.includes("-clear-history-help"));
-  assert.ok(!content.includes("data-l10n-id=\"pref-title\""));
+  assert.ok(!content.includes('data-l10n-id="pref-title"'));
   assert.ok(content.includes("-add-collection"));
   assert.ok(content.includes("-clear-history"));
 });
@@ -92,9 +92,11 @@ test("preferences locale includes clear-history copy and no empty-state copy", (
   assert.ok(!en.includes("pref-clear-history-help"));
   assert.ok(!en.includes("pref-title"));
   assert.ok(!zh.includes("仅对插件随机打开"));
-  assert.ok(zh.includes("仅对首次"));
+  assert.ok(!zh.includes("仅对首次"));
+  assert.ok(zh.includes("每次"));
   assert.ok(!en.includes("Only applies when this plugin randomly opens"));
-  assert.ok(en.includes("Only applies the first time"));
+  assert.ok(!en.includes("Only applies the first time"));
+  assert.ok(en.includes("Applies every time"));
   assert.ok(!zh.includes("pref-collections-empty"));
 });
 
@@ -120,6 +122,19 @@ test("preferences action buttons use larger pill styles inside cards", () => {
   assert.ok(css.includes("font-size: 14px;"));
   assert.ok(css.includes("align-items: center;"));
   assert.ok(css.includes("justify-content: center;"));
+});
+
+test("preferences toolbar buttons all use the clear-history color style", () => {
+  const content = readFileSync(
+    path.join(process.cwd(), "addon/content/preferences.xhtml"),
+    "utf8",
+  );
+
+  const toolbarButtons = content.match(
+    /class="random-read-pref-action random-read-pref-action-secondary"/g,
+  );
+
+  assert.equal(toolbarButtons?.length, 3);
 });
 
 test("preferences styles include custom percent suffix and zoom option layout", () => {

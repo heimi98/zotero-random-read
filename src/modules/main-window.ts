@@ -38,12 +38,47 @@ function ensureStyleSheet(win: Window) {
 }
 
 function ensureToolbarButton(win: _ZoteroTypes.MainWindow) {
-  const toolbar = win.document.getElementById("zotero-items-toolbar");
-  if (!toolbar || win.document.getElementById(BUTTON_ID)) {
+  const toolbar = getToolbarButtonContainer(win);
+  if (!toolbar) {
     refreshToolbarButton(win);
     return;
   }
 
+  const button =
+    win.document.getElementById(BUTTON_ID) ?? createToolbarButton(win);
+
+  const insertBefore = getToolbarButtonInsertBefore(win, toolbar, button);
+  if (
+    button.parentElement !== toolbar ||
+    (insertBefore && button.nextElementSibling !== insertBefore)
+  ) {
+    toolbar.insertBefore(button, insertBefore);
+  }
+  refreshToolbarButton(win);
+}
+
+function getToolbarButtonContainer(win: Window) {
+  return (
+    win.document.getElementById("zotero-tabs-toolbar") ??
+    win.document.getElementById("zotero-items-toolbar")
+  );
+}
+
+function getToolbarButtonInsertBefore(
+  win: Window,
+  toolbar: Element,
+  button: Element,
+) {
+  if (toolbar.id !== "zotero-tabs-toolbar") {
+    return null;
+  }
+
+  const insertBefore =
+    win.document.getElementById("zotero-tb-tabs-menu") ?? toolbar.firstChild;
+  return insertBefore === button ? null : insertBefore;
+}
+
+function createToolbarButton(win: _ZoteroTypes.MainWindow) {
   const button = win.document.createXULElement("toolbarbutton");
   button.id = BUTTON_ID;
   button.className = "zotero-tb-button";
@@ -53,9 +88,7 @@ function ensureToolbarButton(win: _ZoteroTypes.MainWindow) {
   button.addEventListener("command", () => {
     void onToolbarButtonClick(win);
   });
-
-  toolbar.appendChild(button);
-  refreshToolbarButton(win);
+  return button;
 }
 
 function refreshToolbarButton(win: Window) {
@@ -100,7 +133,9 @@ function handleRandomReadError(error: unknown) {
 
   if (error.cause) {
     Zotero.logError(
-      error.cause instanceof Error ? error.cause : new Error(String(error.cause)),
+      error.cause instanceof Error
+        ? error.cause
+        : new Error(String(error.cause)),
     );
   }
   showProgressMessage(messageByCode[error.code]);

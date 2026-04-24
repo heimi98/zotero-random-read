@@ -15,7 +15,7 @@ function requireRandomReadHelper(name: string) {
   return helper as (...args: any[]) => any;
 }
 
-test("shouldApplyDefaultPdfZoom only applies to first-time built-in PDF opens", () => {
+test("shouldApplyDefaultPdfZoom applies to every built-in PDF open", () => {
   const shouldApplyDefaultPdfZoom = requireRandomReadHelper(
     "shouldApplyDefaultPdfZoom",
   );
@@ -23,32 +23,12 @@ test("shouldApplyDefaultPdfZoom only applies to first-time built-in PDF opens", 
   assert.equal(
     shouldApplyDefaultPdfZoom({
       attachmentReaderType: "pdf",
-      hasExistingReaderState: false,
-      isReaderAlreadyOpen: false,
     }),
     true,
   );
   assert.equal(
     shouldApplyDefaultPdfZoom({
-      attachmentReaderType: "pdf",
-      hasExistingReaderState: true,
-      isReaderAlreadyOpen: false,
-    }),
-    false,
-  );
-  assert.equal(
-    shouldApplyDefaultPdfZoom({
-      attachmentReaderType: "pdf",
-      hasExistingReaderState: false,
-      isReaderAlreadyOpen: true,
-    }),
-    false,
-  );
-  assert.equal(
-    shouldApplyDefaultPdfZoom({
       attachmentReaderType: "epub",
-      hasExistingReaderState: false,
-      isReaderAlreadyOpen: false,
     }),
     false,
   );
@@ -94,4 +74,14 @@ test("pdf default zoom waits for the reader view to finish initializing", () => 
   );
 
   assert.ok(source.includes("initializedPromise"));
+});
+
+test("pdf default zoom no longer checks persisted reader state before applying", () => {
+  const source = readFileSync(
+    path.join(process.cwd(), "src/modules/pdf-default-zoom.ts"),
+    "utf8",
+  );
+
+  assert.ok(!source.includes("hasExistingPdfReaderState"));
+  assert.ok(!source.includes("isPdfReaderAlreadyOpen"));
 });
