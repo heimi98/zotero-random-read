@@ -11,15 +11,17 @@ import type {
 export function getSelectableCollectionSections(): CollectionPickerSection[] {
   const sections: CollectionPickerSection[] = [];
 
-  for (const library of Zotero.Libraries.getAll()) {
+  for (const library of getLibrariesInCollectionTreeOrder()) {
     if (library.libraryType === "feed") {
       continue;
     }
 
-    const roots = Zotero.Collections.getByLibrary(library.id, false)
-      .map((collection) => buildNode(collection, library.id));
+    const libraryID = getLibraryID(library);
+    const roots = Zotero.Collections.getByLibrary(libraryID, false).map(
+      (collection) => buildNode(collection, libraryID),
+    );
     sections.push({
-      libraryID: library.id,
+      libraryID,
       libraryName: library.name,
       roots,
     });
@@ -41,7 +43,26 @@ export function filterMissingAllowedCollections(current: AllowedCollection[]) {
   };
 }
 
-function buildNode(collection: Zotero.Collection, libraryID: number): CollectionPickerNode {
+function getLibrariesInCollectionTreeOrder() {
+  const libraries = new Map<number, _ZoteroTypes.Library.LibraryLike>();
+  const userLibrary = Zotero.Libraries.userLibrary;
+  libraries.set(getLibraryID(userLibrary), userLibrary);
+
+  for (const group of Zotero.Groups.getAll()) {
+    libraries.set(getLibraryID(group), group);
+  }
+
+  return [...libraries.values()];
+}
+
+function getLibraryID(library: _ZoteroTypes.Library.LibraryLike) {
+  return library.libraryID;
+}
+
+function buildNode(
+  collection: Zotero.Collection,
+  libraryID: number,
+): CollectionPickerNode {
   const reference = {
     libraryID,
     collectionKey: collection.key,
@@ -52,9 +73,9 @@ function buildNode(collection: Zotero.Collection, libraryID: number): Collection
     key: createCollectionReferenceKey(reference),
     label: collection.name,
     reference,
-    children: collection
-      .getChildCollections(false, false)
-      .map((childCollection) => buildNode(childCollection, libraryID)),
+    children: Zotero.Collections.getByParent(collection.id, false).map(
+      (childCollection) => buildNode(childCollection, libraryID),
+    ),
   };
 }
 
@@ -69,7 +90,10 @@ function walkPickerSections(
   }
 }
 
-function walkNode(node: CollectionPickerNode, visitor: (node: CollectionPickerNode) => void) {
+function walkNode(
+  node: CollectionPickerNode,
+  visitor: (node: CollectionPickerNode) => void,
+) {
   visitor(node);
   for (const child of node.children) {
     walkNode(child, visitor);

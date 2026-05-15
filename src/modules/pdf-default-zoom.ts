@@ -12,8 +12,11 @@ import {
 } from "./random-read";
 
 type ReaderOpen = typeof Zotero.Reader.open;
+type ReaderOpenItemID = Parameters<ReaderOpen>[0];
+type DefaultPdfZoomValue = ReturnType<typeof resolveDefaultPdfZoomValue>;
 
 let originalReaderOpen: ReaderOpen | undefined;
+const FORCE_PAGES_LOADED_TIMEOUT = 10000;
 
 export function installPdfDefaultZoomBehavior() {
   if (originalReaderOpen) {
@@ -26,32 +29,8 @@ export function installPdfDefaultZoomBehavior() {
     location,
     options,
   ) {
-    const item = await Zotero.Items.getAsync(itemID);
     const reader = await originalReaderOpen!(itemID, location, options);
-
-    if (
-      !item ||
-      !reader ||
-      !shouldApplyDefaultPdfZoom({
-        attachmentReaderType: item.attachmentReaderType,
-      })
-    ) {
-      return reader;
-    }
-
-    const pdfViewer = await waitForInitializedPdfViewer(reader);
-    const zoomValue = resolveDefaultPdfZoomValue({
-      mode: normalizeDefaultPdfZoomMode(getDefaultPdfZoomMode()),
-      customPercent: normalizeDefaultPdfZoomPercent(getDefaultPdfZoomPercent()),
-    });
-    pdfViewer.currentScaleValue = zoomValue;
-
-    const FORCE_PAGES_LOADED_TIMEOUT = 10000;
-    await Promise.race([
-      pdfViewer.pagesPromise,
-      new Promise((resolve) => setTimeout(resolve, FORCE_PAGES_LOADED_TIMEOUT)),
-    ]);
-    pdfViewer.currentScaleValue = zoomValue;
+    void applyDefaultPdfZoomWhenReady(itemID, reader);
     return reader;
   } as ReaderOpen;
 }
@@ -63,6 +42,49 @@ export function uninstallPdfDefaultZoomBehavior() {
 
   Zotero.Reader.open = originalReaderOpen;
   originalReaderOpen = undefined;
+}
+
+async function applyDefaultPdfZoomWhenReady(
+  itemID: ReaderOpenItemID,
+  reader: any,
+) {
+  try {
+    const item = await Zotero.Items.getAsync(itemID);
+    if (
+      !item ||
+      !reader ||
+      !shouldApplyDefaultPdfZoom({
+        attachmentReaderType: item.attachmentReaderType,
+      })
+    ) {
+      return;
+    }
+
+    const pdfViewer = await waitForInitializedPdfViewer(reader);
+    const zoomValue = resolveDefaultPdfZoomValue({
+      mode: normalizeDefaultPdfZoomMode(getDefaultPdfZoomMode()),
+      customPercent: normalizeDefaultPdfZoomPercent(getDefaultPdfZoomPercent()),
+    });
+    pdfViewer.currentScaleValue = zoomValue;
+    void reapplyDefaultPdfZoomAfterPagesLoaded(pdfViewer, zoomValue);
+  } catch (error) {
+    logPdfDefaultZoomError(error);
+  }
+}
+
+async function reapplyDefaultPdfZoomAfterPagesLoaded(
+  pdfViewer: any,
+  zoomValue: DefaultPdfZoomValue,
+) {
+  try {
+    await Promise.race([
+      pdfViewer.pagesPromise,
+      new Promise((resolve) => setTimeout(resolve, FORCE_PAGES_LOADED_TIMEOUT)),
+    ]);
+    pdfViewer.currentScaleValue = zoomValue;
+  } catch (error) {
+    logPdfDefaultZoomError(error);
+  }
 }
 
 async function waitForInitializedPdfViewer(reader: any) {
@@ -82,4 +104,8 @@ async function waitForInitializedPdfViewer(reader: any) {
   }
 
   throw new Error("Timed out waiting for the Zotero PDF reader to initialize");
+}
+
+function logPdfDefaultZoomError(error: unknown) {
+  Zotero.logError(error instanceof Error ? error : new Error(String(error)));
 }

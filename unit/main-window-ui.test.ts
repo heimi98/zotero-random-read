@@ -14,14 +14,21 @@ test("main window button is inserted next to the Zotero tab strip", () => {
   assert.ok(source.includes('"zotero-items-toolbar"'));
 });
 
-test("main window button uses a larger icon footprint", () => {
+test("main window button uses Zotero tab strip spacing", () => {
   const css = readFileSync(
     path.join(process.cwd(), "addon/content/zoteroPane.css"),
     "utf8",
   );
 
-  assert.ok(css.includes("min-width: 34px;"));
-  assert.ok(css.includes("height: 32px;"));
-  assert.ok(css.includes("width: 22px;"));
-  assert.ok(css.includes("height: 22px;"));
+  assert.ok(css.includes("box-sizing: border-box;"));
+  assert.ok(css.includes("display: flex;"));
+  assert.ok(css.includes("align-items: center;"));
+  assert.ok(css.includes("justify-content: center;"));
+  assert.ok(css.includes("width: 24px;"));
+  assert.ok(css.includes("min-width: 24px;"));
+  assert.ok(css.includes("height: 24px;"));
+  assert.ok(css.includes("margin: 0 4px;"));
+  assert.ok(css.includes("padding: 0;"));
+  assert.ok(css.includes("width: 24px;"));
+  assert.ok(css.includes("height: 24px;"));
 });

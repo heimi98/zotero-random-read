@@ -1,7 +1,6 @@
 pref-reading-card-title = 随机阅读
 pref-whitelist-description = 只有位于所选 Zotero 文件夹中的条目才会进入随机池。选择父文件夹时会自动包含全部子文件夹。
 pref-add-collection = 添加文件夹
-pref-refresh-collections = 刷新
 pref-clear-history = 清除阅读数据
 pref-default-pdf-zoom-title = PDF 默认页面大小
 pref-default-pdf-zoom-help = 每次在 Zotero 内置 PDF 阅读器中打开 PDF 时都会生效，包括之前已经打开过的文档。

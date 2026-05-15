@@ -26,7 +26,6 @@ export type FluentMessageId =
   | 'pref-default-pdf-zoom-title'
   | 'pref-help'
   | 'pref-reading-card-title'
-  | 'pref-refresh-collections'
   | 'pref-whitelist-description'
   | 'prefs-collection-active'
   | 'prefs-collection-missing'

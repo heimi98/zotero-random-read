@@ -1,4 +1,7 @@
-import { loadHistoryStore, shutdownHistoryStore } from "./modules/history-store";
+import {
+  loadHistoryStore,
+  shutdownHistoryStore,
+} from "./modules/history-store";
 import {
   installMainWindowUI,
   refreshAllMainWindowButtons,
@@ -20,7 +23,7 @@ async function onStartup() {
   ]);
 
   initLocale();
-  registerPreferencePane();
+  await registerPreferencePane();
   installPdfDefaultZoomBehavior();
   await loadHistoryStore();
 

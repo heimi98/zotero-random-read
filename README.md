@@ -1,46 +1,56 @@
 # Zotero Random Read
 
-`Zotero Random Read` 是一个面向 `Zotero 9.x` 的随机阅读插件。它会在 Zotero 顶栏标签页右侧放置一个骰子按钮，点击后从你指定的 Zotero 文件夹中按“久未打开、打开次数少、未读优先”的策略随机打开一个附件。
+Zotero Random Read is a Zotero plugin that helps you rediscover papers from
+the collections you already care about. It adds a dice button near Zotero's tab
+bar and opens a readable attachment from your selected Zotero folders.
 
-## 版本
+The selection is weighted by local reading history, so documents that have never
+been opened through the plugin, have not been opened for a long time, or have
+been opened less often are more likely to appear.
 
-- 当前版本：`0.2.0`
-- 本地构建产物：`.scaffold/build/zotero-random-read.xpi`
+## Features
 
-## 功能
+- Adds a dice button to Zotero's main window.
+- Randomly opens readable attachments from selected Zotero collections.
+- Lets you choose collections from a Zotero-style tree picker.
+- Automatically includes child collections when a parent collection is selected.
+- Tracks random-read history locally on the current device.
+- Provides a clear reading data action to reset local random-read history.
+- Applies a default PDF page size whenever Zotero's built-in PDF reader opens a
+  PDF.
 
-- 在主窗口顶栏标签页右侧注入一个彩色骰子按钮
-- 只从用户白名单中的 Zotero 文件夹里抽取候选条目
-- 文件夹选择界面支持：
-  - 树状缩进显示父子关系
-  - 复选框多选
-  - 勾选父文件夹时自动包含全部子文件夹
-  - `全选 / 全不选`
-- 随机策略会优先照顾：
-  - 从未被随机打开过的条目
-  - 很久没有被随机打开过的条目
-  - 打开次数较少的条目
-- 直接复用 Zotero 的默认双击行为打开附件
-- 提供 PDF 默认页面大小设置：
-  - `实际大小`
-  - `适合页面`
-  - `适合宽度`
-  - `自定义百分比`
-- PDF 页面大小设置会在每次打开 Zotero 内置 PDF 阅读器时生效
-- 设置页与文件夹选择弹窗统一为暖色调卡片风格
-- 本地记录阅读历史，并支持在设置中一键清除阅读数据
+## Installation
 
-## 使用方法
+Download the latest `.xpi` package from the GitHub Releases page, then install
+it in Zotero:
 
-1. 打开 Zotero 设置中的 `随机阅读` 页面。
-2. 点击 `添加文件夹`，在树状列表里勾选要纳入随机池的文件夹。
-3. 关闭设置页后，在 Zotero 顶栏标签页右侧点击骰子图标。
-4. 如果希望每次打开 PDF 时自动使用特定页面大小，可在设置页的 `PDF 默认页面大小` 卡片中配置。
-5. 如果想让所有文档重新回到“初始随机状态”，可在设置页点击 `清除阅读数据`。
+1. Open `Tools` > `Add-ons`.
+2. Click the gear menu.
+3. Choose `Install Add-on From File...`.
+4. Select the downloaded `.xpi` file.
+5. Restart Zotero if prompted.
 
-更详细的中文说明见 [doc/README-zhCN.md](./doc/README-zhCN.md)。
+## Usage
 
-## 开发
+1. Open Zotero preferences and select `Random Read`.
+2. Click `Add folder`.
+3. Select the Zotero collections that should be part of the random pool.
+4. Click the dice button in the main Zotero window.
+
+To change how PDFs open, use the `Default PDF page size` section in the plugin
+preferences. The setting supports actual size, fit to page, fit to width, and a
+custom percentage.
+
+To start fresh, click `Clear reading data` in the plugin preferences. This only
+removes the plugin's local random-read history; it does not delete Zotero items,
+collections, files, or annotations.
+
+## Local Data
+
+Reading history is stored as a local JSON file inside Zotero's data directory.
+The data is device-local and is used only to weight future random selections.
+
+## Development
 
 ```bash
 npm install
@@ -49,18 +59,15 @@ npx tsc --noEmit
 npm run build
 ```
 
-说明：
+`npm run build` runs the plugin build, TypeScript validation, and unit tests.
 
-- `npm run build` 会重新生成 `.scaffold/build/zotero-random-read.xpi`
-- `npm run test:zotero` 需要本机存在可用的 Zotero 可执行文件
+## Documentation
 
-## 仓库说明
+- [中文使用说明](./doc/README-zhCN.md)
+- [Development notes](./doc/DEVELOPMENT.md)
+- [Changelog](./CHANGELOG.md)
 
-- GitHub: [heimi98/zotero-random-read](https://github.com/heimi98/zotero-random-read)
-- Issue Tracker: [Issues](https://github.com/heimi98/zotero-random-read/issues)
+## Links
 
-## 文档
-
-- 中文使用说明：[doc/README-zhCN.md](./doc/README-zhCN.md)
-- 开发与发布说明：[doc/DEVELOPMENT.md](./doc/DEVELOPMENT.md)
-- 变更记录：[CHANGELOG.md](./CHANGELOG.md)
+- [GitHub repository](https://github.com/heimi98/zotero-random-read)
+- [Issue tracker](https://github.com/heimi98/zotero-random-read/issues)

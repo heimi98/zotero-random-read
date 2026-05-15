@@ -5,9 +5,7 @@
     href="chrome://__addonRef__/content/preferences.css"
   />
 </linkset>
-<groupbox
-  onload="Zotero.__addonInstance__.hooks.onPrefsEvent('load', { window })"
->
+<groupbox id="zotero-prefpane-__addonRef__-preferences-root">
   <html:div class="random-read-pref-cards">
     <html:section
       id="zotero-prefpane-__addonRef__-reading-card"
@@ -30,12 +28,6 @@
           class="random-read-pref-action random-read-pref-action-secondary"
           type="button"
           data-l10n-id="pref-add-collection"
-        ></html:button>
-        <html:button
-          id="zotero-prefpane-__addonRef__-refresh-collections"
-          class="random-read-pref-action random-read-pref-action-secondary"
-          type="button"
-          data-l10n-id="pref-refresh-collections"
         ></html:button>
         <html:button
           id="zotero-prefpane-__addonRef__-clear-history"

@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://zotero/skin/zotero.css" type="text/css"?>
+<?xml-stylesheet href="chrome://zotero/skin/overlay.css" type="text/css"?>
+<?xml-stylesheet href="chrome://zotero-platform/content/overlay.css" type="text/css"?>
+<?xml-stylesheet href="chrome://zotero-platform/content/zotero.css" type="text/css"?>
+<?xml-stylesheet href="chrome://__addonRef__/content/collection-picker.css" type="text/css"?>
+
+<window
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  id="random-read-picker-window"
+  class="zotero-dialog"
+  width="760"
+  height="620"
+  drawintitlebar-platforms="mac"
+>
+  <dialog id="random-read-picker-dialog" buttons="cancel,accept">
+    <script>
+      Services.scriptloader.loadSubScript(
+        "chrome://__addonRef__/content/collection-picker.js",
+        this,
+      );
+    </script>
+    <html:div id="random-read-picker-root">
+      <html:p id="random-read-picker-message" class="rr-picker-intro"></html:p>
+      <html:div class="rr-picker-actions">
+        <html:button
+          id="random-read-picker-select-all"
+          class="rr-picker-action-button"
+          type="button"
+        ></html:button>
+        <html:button
+          id="random-read-picker-clear-all"
+          class="rr-picker-action-button"
+          type="button"
+        ></html:button>
+      </html:div>
+      <html:div id="random-read-picker-tree" class="rr-picker-tree"></html:div>
+    </html:div>
+  </dialog>
+</window>

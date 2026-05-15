@@ -79,13 +79,6 @@ function bindPrefEvents(window: Window) {
     );
   }
 
-  const refreshButton = doc.querySelector(
-    `#zotero-prefpane-${config.addonRef}-refresh-collections`,
-  ) as HTMLButtonElement | null;
-  if (refreshButton) {
-    attachButtonClickListener(refreshButton, () => void renderPrefsUI(window));
-  }
-
   const clearHistoryButton = doc.querySelector(
     `#zotero-prefpane-${config.addonRef}-clear-history`,
   ) as HTMLButtonElement | null;
@@ -135,26 +128,36 @@ function bindPrefEvents(window: Window) {
 }
 
 async function handleAddCollection(window: Window) {
-  const current = getAllowedCollections();
-  const { sections } = filterMissingAllowedCollections(current);
-  if (!sections.some((section) => section.roots.length > 0)) {
+  try {
+    const current = getAllowedCollections();
+    const { sections } = filterMissingAllowedCollections(current);
+    if (!sections.some((section) => section.roots.length > 0)) {
+      Services.prompt.alert(
+        window as unknown as mozIDOMWindowProxy,
+        getString("picker-title"),
+        getString("picker-no-collections"),
+      );
+      return;
+    }
+
+    const selectedCollections = await openCollectionPickerDialog(
+      window,
+      sections,
+      current,
+    );
+    if (!selectedCollections) {
+      return;
+    }
+    setAllowedCollections(selectedCollections);
+    await renderPrefsUI(window);
+  } catch (error) {
+    Zotero.logError(error instanceof Error ? error : new Error(String(error)));
     Services.prompt.alert(
       window as unknown as mozIDOMWindowProxy,
       getString("picker-title"),
-      getString("picker-no-collections"),
+      getString("message-open-failed"),
     );
-    return;
   }
-
-  const selectedCollections = await openCollectionPickerDialog(
-    sections,
-    current,
-  );
-  if (!selectedCollections) {
-    return;
-  }
-  setAllowedCollections(selectedCollections);
-  await renderPrefsUI(window);
 }
 
 async function handleClearHistory(window: Window) {
