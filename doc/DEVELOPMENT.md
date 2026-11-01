@@ -34,3 +34,5 @@ unzip -p .scaffold/build/zotero-random-read.xpi manifest.json
 - The scaffold release URLs are configured for GitHub Releases
 - Pushing a version tag (for example, `v0.3.2`) triggers the release workflow,
   which uploads the built `.xpi` and refreshes `update.json` on the `release` tag
+- If the Release already exists, the workflow uploads assets to it. To retry an
+  existing tag, run the Release workflow manually with that tag as its input.
