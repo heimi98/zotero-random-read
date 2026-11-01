@@ -28,14 +28,19 @@ export async function loadHistoryStore() {
 
   if (parsed.wasCorrupt) {
     Zotero.logError(
-      new Error(`[${config.addonName}] History file was corrupt. Resetting it.`),
+      new Error(
+        `[${config.addonName}] History file was corrupt. Resetting it.`,
+      ),
     );
     await writeAtomicText(`${path}.bak`, raw);
     queueHistoryWrite();
   }
 }
 
-export function getHistoryEntry(libraryID: number, itemKey: string): HistoryEntry | undefined {
+export function getHistoryEntry(
+  libraryID: number,
+  itemKey: string,
+): HistoryEntry | undefined {
   return historyState.items[buildHistoryKey(libraryID, itemKey)];
 }
 

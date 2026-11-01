@@ -24,20 +24,18 @@ const index = buildPickerTreeIndex(tree);
 test("selecting a parent selects all descendants", () => {
   const selected = toggleTreeSelection(new Set(), "1/ROOT", true, index);
 
-  assert.deepEqual(
-    [...selected].sort(),
-    ["1/CHILD_A", "1/CHILD_B", "1/ROOT"],
-  );
+  assert.deepEqual([...selected].sort(), ["1/CHILD_A", "1/CHILD_B", "1/ROOT"]);
 });
 
 test("selecting all siblings promotes the parent to checked", () => {
   const afterFirst = toggleTreeSelection(new Set(), "1/CHILD_A", true, index);
   const afterSecond = toggleTreeSelection(afterFirst, "1/CHILD_B", true, index);
 
-  assert.deepEqual(
-    [...afterSecond].sort(),
-    ["1/CHILD_A", "1/CHILD_B", "1/ROOT"],
-  );
+  assert.deepEqual([...afterSecond].sort(), [
+    "1/CHILD_A",
+    "1/CHILD_B",
+    "1/ROOT",
+  ]);
 });
 
 test("unchecking a child clears the parent while keeping the sibling", () => {
@@ -54,10 +52,7 @@ test("unchecking a child clears the parent while keeping the sibling", () => {
 test("expandSelectionForDisplay marks descendants of stored parent selections", () => {
   const expanded = expandSelectionForDisplay(new Set(["1/ROOT"]), index);
 
-  assert.deepEqual(
-    [...expanded].sort(),
-    ["1/CHILD_A", "1/CHILD_B", "1/ROOT"],
-  );
+  assert.deepEqual([...expanded].sort(), ["1/CHILD_A", "1/CHILD_B", "1/ROOT"]);
 });
 
 test("compressSelection keeps only the highest selected ancestor", () => {

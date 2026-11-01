@@ -18,7 +18,11 @@ export function buildPickerTreeIndex(nodes: PickerTreeNode[]): PickerTreeIndex {
   const parentKeyByKey = new Map<string, string | null>();
   const depthByKey = new Map<string, number>();
 
-  function visit(node: PickerTreeNode, parentKey: string | null, depth: number): string[] {
+  function visit(
+    node: PickerTreeNode,
+    parentKey: string | null,
+    depth: number,
+  ): string[] {
     allKeys.add(node.key);
     parentKeyByKey.set(node.key, parentKey);
     depthByKey.set(node.key, depth);
@@ -54,7 +58,10 @@ export function toggleTreeSelection(
   index: PickerTreeIndex,
 ) {
   const next = new Set(selectedKeys);
-  const subtreeKeys = [nodeKey, ...(index.descendantKeysByKey.get(nodeKey) ?? [])];
+  const subtreeKeys = [
+    nodeKey,
+    ...(index.descendantKeysByKey.get(nodeKey) ?? []),
+  ];
 
   for (const key of subtreeKeys) {
     if (shouldSelect) {
@@ -108,7 +115,9 @@ export function compressSelection(
 function normalizeSelection(selectedKeys: Set<string>, index: PickerTreeIndex) {
   const next = new Set(selectedKeys);
   const parentKeys = [...index.childKeysByKey.keys()].sort((left, right) => {
-    return (index.depthByKey.get(right) ?? 0) - (index.depthByKey.get(left) ?? 0);
+    return (
+      (index.depthByKey.get(right) ?? 0) - (index.depthByKey.get(left) ?? 0)
+    );
   });
 
   for (const parentKey of parentKeys) {

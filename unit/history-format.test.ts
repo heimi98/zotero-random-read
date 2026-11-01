@@ -16,8 +16,16 @@ test("parseHistoryState falls back to an empty state for invalid JSON", () => {
 });
 
 test("recordItemOpened increments counts and overwrites timestamps", () => {
-  const first = recordItemOpened(createEmptyHistoryState(), "1/ABCD1234", "2026-04-22T00:00:00.000Z");
-  const second = recordItemOpened(first, "1/ABCD1234", "2026-04-23T00:00:00.000Z");
+  const first = recordItemOpened(
+    createEmptyHistoryState(),
+    "1/ABCD1234",
+    "2026-04-22T00:00:00.000Z",
+  );
+  const second = recordItemOpened(
+    first,
+    "1/ABCD1234",
+    "2026-04-23T00:00:00.000Z",
+  );
 
   assert.deepEqual(second.items["1/ABCD1234"], {
     lastOpenedAt: "2026-04-23T00:00:00.000Z",
@@ -34,14 +42,18 @@ test("serializeHistoryState preserves versioned JSON content", () => {
 
   assert.equal(
     serializeHistoryState(state),
-    JSON.stringify({
-      version: 1,
-      items: {
-        "1/ZXCV5678": {
-          lastOpenedAt: "2026-04-22T08:30:00.000Z",
-          openCount: 1,
+    JSON.stringify(
+      {
+        version: 1,
+        items: {
+          "1/ZXCV5678": {
+            lastOpenedAt: "2026-04-22T08:30:00.000Z",
+            openCount: 1,
+          },
         },
       },
-    }, null, 2),
+      null,
+      2,
+    ),
   );
 });

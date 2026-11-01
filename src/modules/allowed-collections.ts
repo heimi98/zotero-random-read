@@ -29,7 +29,11 @@ export function mergeAllowedCollection({
 } {
   const additionKey = createCollectionReferenceKey(addition);
 
-  if (current.some((collection) => createCollectionReferenceKey(collection) === additionKey)) {
+  if (
+    current.some(
+      (collection) => createCollectionReferenceKey(collection) === additionKey,
+    )
+  ) {
     return {
       collections: current,
       reason: "duplicate",
@@ -46,7 +50,8 @@ export function mergeAllowedCollection({
     }
   }
 
-  const coveredDescendants = descendantsByKey.get(additionKey) ?? new Set<string>();
+  const coveredDescendants =
+    descendantsByKey.get(additionKey) ?? new Set<string>();
   const collections = current.filter((collection) => {
     return !coveredDescendants.has(createCollectionReferenceKey(collection));
   });

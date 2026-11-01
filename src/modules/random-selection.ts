@@ -45,7 +45,9 @@ export function pickWeighted<T>(
     throw new Error("No weighted candidates available");
   }
 
-  const positiveCandidates = candidates.filter((candidate) => candidate.weight > 0);
+  const positiveCandidates = candidates.filter(
+    (candidate) => candidate.weight > 0,
+  );
   if (!positiveCandidates.length) {
     throw new Error("All weighted candidates have non-positive weight");
   }

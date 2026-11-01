@@ -28,7 +28,11 @@ export function parseHistoryState(raw: string | null | undefined): {
 
   try {
     const parsed = JSON.parse(raw) as Partial<HistoryState>;
-    if (parsed.version !== 1 || typeof parsed.items !== "object" || !parsed.items) {
+    if (
+      parsed.version !== 1 ||
+      typeof parsed.items !== "object" ||
+      !parsed.items
+    ) {
       throw new Error("Invalid history payload");
     }
 

@@ -28,8 +28,14 @@ test("pickWeighted uses cumulative weights deterministically", () => {
     { value: "B", weight: 3 },
   ];
 
-  assert.equal(pickWeighted(candidates, () => 0), "A");
-  assert.equal(pickWeighted(candidates, () => 0.99), "B");
+  assert.equal(
+    pickWeighted(candidates, () => 0),
+    "A",
+  );
+  assert.equal(
+    pickWeighted(candidates, () => 0.99),
+    "B",
+  );
 });
 
 test("buildHistoryKey combines library id and item key", () => {

@@ -27,7 +27,10 @@ const sibling: AllowedCollection = {
 };
 
 const descendantsByKey = new Map<string, ReadonlySet<string>>([
-  [createCollectionReferenceKey(root), new Set([createCollectionReferenceKey(child)])],
+  [
+    createCollectionReferenceKey(root),
+    new Set([createCollectionReferenceKey(child)]),
+  ],
   [createCollectionReferenceKey(child), new Set()],
   [createCollectionReferenceKey(sibling), new Set()],
 ]);
@@ -55,10 +58,13 @@ test("mergeAllowedCollection replaces children when adding a parent", () => {
 });
 
 test("removeMissingAllowedCollections strips references whose collections disappeared", () => {
-  const result = removeMissingAllowedCollections([root, child, sibling], new Set([
-    createCollectionReferenceKey(root),
-    createCollectionReferenceKey(sibling),
-  ]));
+  const result = removeMissingAllowedCollections(
+    [root, child, sibling],
+    new Set([
+      createCollectionReferenceKey(root),
+      createCollectionReferenceKey(sibling),
+    ]),
+  );
 
   assert.deepEqual(result.validCollections, [root, sibling]);
   assert.deepEqual(result.missingCollections, [child]);

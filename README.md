@@ -21,6 +21,8 @@ been opened less often are more likely to appear.
 
 ## Installation
 
+Requires Zotero 9.x or 10.0.x.
+
 Download the latest `.xpi` package from the GitHub Releases page, then install
 it in Zotero:
 

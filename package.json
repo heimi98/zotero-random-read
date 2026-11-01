@@ -1,7 +1,7 @@
 {
   "name": "zotero-random-read",
   "type": "module",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Randomly open a readable attachment from selected Zotero collections.",
   "config": {
     "addonName": "Zotero Random Read",
